@@ -1,43 +1,71 @@
-from collections import namedtuple
-import altair as alt
-import math
-import pandas as pd
+# from collections import namedtuple
+# import altair as alt
+# import math
+
 import streamlit as st
+import pandas as pd
+import sqlite3  # 只有在使用SQLite时需要导入
 
-"""
-# Hello World!!
-## This is great!!
-"""
-"""
-# Welcome to Streamlit!
-
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:
-
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
-
-In the meantime, below is an example of what you can do with just a few lines of code:
-"""
+# 创建数据库连接（仅在使用SQLite时需要）
+conn = sqlite3.connect('english_dict.db')  # 将数据库文件名替换为您的实际文件名
+cursor = conn.cursor()
 
 
-with st.echo(code_location='below'):
-    total_points = st.slider("Number of points in spiral, Hello world", 1, 5000, 2000)
-    num_turns = st.slider("Number of turns in spiral", 1, 100, 9)
+def main():
+    st.title("Mind Palace Dictionary App")
+    st.write("Enter a word to get its definitions:")
 
-    Point = namedtuple('Point', 'x y')
-    data = []
+    word = st.text_input("Enter a word:")
 
-    points_per_turn = total_points / num_turns
+    if st.button("Search") or len(word) > 1:
+        word_details = get_word_details(word)
+        if word_details:
+            st.write(f"Details for '{word}':")
+            display_word_details(word_details)
+        else:
+            st.write(f"No details found for '{word}'.")
 
-    for curr_point_num in range(total_points):
-        curr_turn, i = divmod(curr_point_num, points_per_turn)
-        angle = (curr_turn + 1) * 2 * math.pi * i / points_per_turn
-        radius = curr_point_num / total_points
-        x = radius * math.cos(angle)
-        y = radius * math.sin(angle)
-        data.append(Point(x, y))
 
-    st.altair_chart(alt.Chart(pd.DataFrame(data), height=500, width=500)
-        .mark_circle(color='#0068c9', opacity=0.5)
-        .encode(x='x:Q', y='y:Q'))
+def display_word_details(word_details):
+    # 将单词详细信息显示为表格，并应用样式
+    df = pd.DataFrame.from_dict(word_details, orient='index', columns=['值'])
+    df.index.name = '属性'  # 设置第一列的名称为“属性”
 
+    column_widths = {'Column 1': 100,
+                     'Column 2': 200,
+                     'Column 3': 150}
+
+    # 应用列宽到DataFrame
+    styled_df = df.style.set_properties(**{'width': '300px', 'font-size': '12px'}).set_table_styles([
+        dict(selector='th', props=[('width', '300px')])])
+
+    st.dataframe(styled_df, use_container_width=True)  # 设置表格高度
+
+
+def get_word_details(word):
+    # 查询数据库并返回定义（仅在使用SQLite时需要）
+    cursor.execute(
+        "SELECT * FROM english_dict WHERE word COLLATE NOCASE=?", (word,))
+    result = cursor.fetchall()
+
+    if result:
+        _, word, pronunciation, definition, split, synthesis_method, association_method, example_sentence, translation = result[
+            0]
+
+        return {
+            "单词": word,
+            "音标": pronunciation,
+            "释义": definition,
+            "拆分": split,
+            "综合法": synthesis_method,
+            "联想法": association_method,
+            "例句": example_sentence,
+            "翻译": translation
+        }
+    else:
+        return None
+
+
+if __name__ == "__main__":
+    main()
+# https://hyhdict.streamlit.app/
