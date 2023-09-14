@@ -12,7 +12,7 @@ cursor = conn.cursor()
 
 
 def main():
-    st.title("Mind Palace Dictionary App")
+    st.title("Mind2 Palace Dictionary App")
     st.write("Enter a word to get its definitions:")
 
     word = st.text_input("Enter a word:")
