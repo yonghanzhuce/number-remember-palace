@@ -30,16 +30,7 @@ def display_word_details(word_details):
     # 将单词详细信息显示为表格，并应用样式
     df = pd.DataFrame.from_dict(word_details, orient='index', columns=['值'])
     df.index.name = '属性'  # 设置第一列的名称为“属性”
-
-    column_widths = {'Column 1': 100,
-                     'Column 2': 200,
-                     'Column 3': 150}
-
-    # 应用列宽到DataFrame
-    styled_df = df.style.set_properties(**{'width': '300px', 'font-size': '12px'}).set_table_styles([
-        dict(selector='th', props=[('width', '300px')])])
-
-    st.dataframe(styled_df, use_container_width=True)  # 设置表格高度
+    st.dataframe(df, use_container_width=True)  # 设置表格高度
 
 
 def get_word_details(word):
