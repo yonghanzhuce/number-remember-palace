@@ -12,6 +12,12 @@ cursor = conn.cursor()
 
 
 def main():
+
+    st.set_page_config(
+        page_title="Dictionary",  # 设置自定义标题
+        page_icon="📊",           # 设置自定义图标，可选
+        layout="wide"             # 设置页面布局，可选
+    )
     st.title("Mind Palace Dictionary App")
     st.write("Enter a word to get its definitions:")
 
