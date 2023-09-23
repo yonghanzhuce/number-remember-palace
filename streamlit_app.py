@@ -18,6 +18,13 @@ def main():
         page_icon="📊",           # 设置自定义图标，可选
         # layout="wide"             # 设置页面布局，可选
     )
+    hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
     st.title("Mind Palace Dictionary App")
     st.write("Enter a word to get its definitions:")
 
