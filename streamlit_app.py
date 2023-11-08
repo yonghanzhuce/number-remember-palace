@@ -2,7 +2,7 @@ import streamlit as st
 import random
 
 # 设置页面标题
-st.title('数字记忆训练')
+st.title('老何家数字记忆训练')
 
 # 初始化session_state
 if 'show_numbers' not in st.session_state:
